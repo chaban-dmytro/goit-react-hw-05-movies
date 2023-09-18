@@ -1,0 +1,106 @@
+import { fetchByName } from 'api';
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useLocation, useSearchParams } from 'react-router-dom';
+
+export const Movies = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [data, setData] = useState();
+  const [status, setStatus] = useState('idle');
+  const [name, setName] = useState('');
+
+  const location = useLocation();
+  let movieName = searchParams.get('query') ?? '';
+
+  const updateQueryString = evt => {
+    const nextParams =
+      evt.target.value !== '' ? { query: evt.target.value } : {};
+    setSearchParams(nextParams);
+  };
+
+  const updateName = evt => {
+    evt.preventDefault();
+    setName(movieName);
+  };
+
+  const cleanInput = () => {
+    setSearchParams({ query: '' });
+    setName('');
+    setData('');
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const optionsForName = {
+        method: 'GET',
+        url: 'https://api.themoviedb.org/3/search/movie',
+        params: {
+          query: `${movieName}`,
+          include_adult: 'false',
+          language: 'en-US',
+          page: '1',
+        },
+        headers: {
+          accept: 'application/json',
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZGMyZmM3OWE5Njc5NTQ5MTJjYTVhYWQ0NWI5NTU3NCIsInN1YiI6IjY1MDA0YzQzMWJmMjY2MDBmZmI1YWI1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.zirrhOIT7yqxW1n0pdlMVLkB4-AicQWjZCs5JhftH6Q',
+        },
+      };
+      try {
+        const movieByName = await fetchByName(optionsForName);
+        console.log(movieByName);
+        setData(movieByName.data.results);
+        setStatus('resolved');
+      } catch (error) {
+        setStatus('rejected');
+        console.log(error);
+      }
+    }
+    if (name.length !== 0) {
+      fetchData();
+    }
+  }, [name]);
+
+  return (
+    <>
+      <form action="submit" onSubmit={updateName}>
+        <input
+          name="name"
+          type="text"
+          value={movieName}
+          onChange={updateQueryString}
+        />
+        <button type="submit">Search</button>
+        <button type="button" onClick={cleanInput}>
+          Clean
+        </button>
+      </form>
+
+      {status === 'idle' ? null : (
+        <>
+          <ul className="items">
+            {status === 'pending' && <div>LOAD</div>}
+            {status === 'rejected' && <div>Error! Reload page</div>}
+            {status === 'resolved' &&
+              (data.length === 0 ? (
+                <div>There are no movies!</div>
+              ) : (
+                <>
+                  {data.map(({ title, id, original_title }) => {
+                    return (
+                      <li key={id}>
+                        <Link to={`/movies/${id}`} state={{ from: location }}>
+                          {title ? title : original_title}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </>
+              ))}
+          </ul>
+        </>
+      )}
+    </>
+  );
+};
+
+export default Movies;
