@@ -1,5 +1,27 @@
 @import-normalize; /* bring in normalize.css styles */
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 20px 0;
+}
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,9 +29,156 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: black;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 20px;
+}
+
+/* ======================= Navigation =============== */
+
+.nav-items {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid gray;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: black;
+  font-size: 20px;
+}
+
+.active {
+  color: red;
+}
+
+/* ======================= Movie details =============== */
+
+.go-back {
+  display: block;
+  padding: 10px 0;
+}
+
+.movie-wrapper {
+  display: flex;
+  border-bottom: 1px solid gray;
+  padding-bottom: 5px;
+}
+
+.movie-img {
+  margin-right: 10px;
+  width: 400px;
+  height: 500px;
+  object-fit: cover;
+}
+
+.movie-text {
+  display: flex;
+  gap: 5px;
+}
+
+.movie-more-info-link {
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+}
+
+.movie-more-info-link:hover {
+  color: #1565c0;
+}
+
+/* ======================= Movies =============== */
+
+form {
+  padding: 10px 0;
+}
+
+.movies-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 5px;
+}
+
+.movies-link {
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+}
+
+.movies-link:hover {
+  color: #1565c0;
+}
+
+/* ======================= CAST =============== */
+
+.cast-items {
+  padding: 20px 0;
+}
+
+.cast-img {
+  width: 250px;
+  height: 300px;
+  object-fit: cover;
+}
+
+/* ======================= LOADER =============== */
+
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  transform: translateY(-24px);
+  width: 48px;
+  height: 48px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader::after {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid;
+  border-color: #ff3d00 transparent;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+form {
+  display: flex;
+  gap: 10px;
+}
+
+#outlined-basic {
+  height: 5px;
 }

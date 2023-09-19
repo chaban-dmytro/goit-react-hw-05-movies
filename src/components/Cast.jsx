@@ -1,8 +1,10 @@
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { fetchById } from 'api';
 import { useEffect, useState } from 'react';
+import noImg from 'no_img.jpg';
+import Loader from './Loader';
 
-export const Cast = () => {
+const Cast = () => {
   const [data, setData] = useState();
   const [status, setStatus] = useState('idle');
 
@@ -29,9 +31,6 @@ export const Cast = () => {
         console.log(error);
       }
     }
-    // if (context.name) {
-    //   fetchData();
-    // }
     // eslint-disable-next-line
     fetchData();
   }, [movieId]);
@@ -40,28 +39,28 @@ export const Cast = () => {
       {status === 'idle' ? null : (
         <>
           <div className="wrapper">
-            {status === 'pending' && <div>LOAD</div>}
+            {status === 'pending' && <Loader />}
             {status === 'rejected' && <div>Error! Reload page</div>}
             {status === 'resolved' &&
               (data.length === 0 ? (
                 <div>There are no info!</div>
               ) : (
                 <>
-                  <ul>
+                  <ul className="cast-items">
                     {data.map(({ name, character, profile_path }) => {
                       return (
-                        <li key={name}>
+                        <li key={name} className="cast-item">
                           <img
+                            className="cast-img"
                             src={`https://image.tmdb.org/t/p/w300${profile_path}`}
                             alt={name}
                             onError={e => {
-                              e.target.src =
-                                'https://shosse.su/upload/iblock/01d/01da52612057b97ac22b4ad9180d0fb8.png';
+                              e.target.src = noImg;
                               e.target.alt = 'No info';
                             }}
                           />
-                          <p>{name}</p>
-                          <p>{character}</p>
+                          <p className="cast-text">{name}</p>
+                          <p className="cast-text">{character}</p>
                         </li>
                       );
                     })}
@@ -74,3 +73,5 @@ export const Cast = () => {
     </>
   );
 };
+
+export default Cast;

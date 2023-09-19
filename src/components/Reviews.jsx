@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { fetchById } from 'api';
 import { useParams } from 'react-router-dom';
 
-export const Reviews = () => {
+const Reviews = () => {
   const [data, setData] = useState();
   const [status, setStatus] = useState('idle');
 
   const { movieId } = useParams();
-  console.log(movieId);
 
   useEffect(() => {
     async function fetchData() {
@@ -23,7 +22,6 @@ export const Reviews = () => {
       };
       try {
         const movieById = await fetchById(optionsForId);
-        console.log(movieById);
         setData(movieById.data.results);
         setStatus('resolved');
       } catch (error) {
@@ -31,9 +29,6 @@ export const Reviews = () => {
         console.log(error);
       }
     }
-    // if (context.name) {
-    //   fetchData();
-    // }
     // eslint-disable-next-line
     fetchData();
   }, [movieId]);
@@ -67,3 +62,5 @@ export const Reviews = () => {
     </>
   );
 };
+
+export default Reviews;

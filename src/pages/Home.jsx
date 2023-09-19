@@ -1,6 +1,8 @@
 import { fetch } from 'api';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Loader from 'components/Loader';
+import css from './Home.module.css';
 
 const Home = () => {
   const [data, setData] = useState();
@@ -8,6 +10,7 @@ const Home = () => {
 
   useEffect(() => {
     async function fetchData() {
+      setStatus('pending');
       try {
         const topMovies = await fetch();
         setData(topMovies.data);
@@ -17,9 +20,6 @@ const Home = () => {
         console.log(error);
       }
     }
-    // if (context.name) {
-    //   fetchData();
-    // }
     // eslint-disable-next-line
     fetchData();
   }, []);
@@ -27,20 +27,23 @@ const Home = () => {
     <>
       {status === 'idle' ? null : (
         <>
-          <ul className="items">
-            {status === 'pending' && <div>LOAD</div>}
-            {status === 'rejected' && <div>Error! Reload page</div>}
+          {status === 'pending' && <Loader />}
+          {status === 'rejected' && <div>Error! Reload page</div>}
+          <ul className={css.items}>
             {status === 'resolved' &&
               (data.results.length === 0 ? (
                 <div>There are no images!</div>
               ) : (
-                data.results.map(result => (
-                  <li key={result.id}>
-                    <Link to={`/movies/${result.id}`}>
-                      {result.title ? result.title : result.name}
-                    </Link>
-                  </li>
-                ))
+                <>
+                  <h2>Trending toray</h2>
+                  {data.results.map(result => (
+                    <li key={result.id} className={css.item}>
+                      <Link to={`/movies/${result.id}`} className={css.link}>
+                        {result.title ? result.title : result.name}
+                      </Link>
+                    </li>
+                  ))}
+                </>
               ))}
           </ul>
         </>

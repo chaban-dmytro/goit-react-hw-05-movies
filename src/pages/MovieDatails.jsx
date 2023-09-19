@@ -1,6 +1,9 @@
+import { Suspense } from 'react';
 import { fetchById } from 'api';
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
+import Loader from 'components/Loader';
+import noImg from '../no_img.jpg';
 
 const MovieDatails = () => {
   const [data, setData] = useState();
@@ -13,6 +16,7 @@ const MovieDatails = () => {
 
   useEffect(() => {
     async function fetchData() {
+      setStatus('pending');
       const optionsForId = {
         method: 'GET',
         url: `https://api.themoviedb.org/3/movie/${movieId}`,
@@ -35,57 +39,71 @@ const MovieDatails = () => {
     fetchData();
   }, [movieId]);
 
-  console.log(location);
-
   return (
     <>
       {status === 'idle' ? null : (
         <>
+          {status === 'pending' && <Loader />}
+          {status === 'rejected' && <div>Error! Reload page</div>}
           <div className="wrapper">
-            {status === 'pending' && <div>LOAD</div>}
-            {status === 'rejected' && <div>Error! Reload page</div>}
             {status === 'resolved' &&
               (!data ? (
                 <div>There are no movies!</div>
               ) : (
                 <>
-                  <Link to={backLinkLocationRef.current}>Go back</Link>
-                  <img
-                    src={`https://image.tmdb.org/t/p/w300${data.poster_path}`}
-                    alt={data.title}
-                    onError={e => {
-                      e.target.src =
-                        'https://shosse.su/upload/iblock/01d/01da52612057b97ac22b4ad9180d0fb8.png';
-                      e.target.alt = 'No info';
-                    }}
-                  />
-                  <div className="wrap">
-                    <h1 className="title">
-                      {data.title} <span>{data.release_date}</span>
-                    </h1>
-                    <p className="score">{data.vote_average}</p>
-                    <h2 className="subtitle">overview</h2>
-                    <p className="text">{data.overview}</p>
-                    <h2 className="subtitle">genres</h2>
-                    <p className="text">
-                      {data.genres.map(gener => {
-                        return gener.name;
-                      })}
-                    </p>
+                  <Link to={backLinkLocationRef.current} className="go-back">
+                    Go back
+                  </Link>
+                  <div className="movie-wrapper">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w300${data.poster_path}`}
+                      alt={data.title}
+                      className="movie-img"
+                      onError={e => {
+                        e.target.src = noImg;
+                        e.target.alt = 'No info';
+                      }}
+                    />
+                    <div className="movie-wrap">
+                      <h1 className="movie-title">
+                        {data.title}{' '}
+                        <span>
+                          ({data.release_date?.slice(0, 4) ?? '0000'})
+                        </span>
+                        {/* <span>({data.release_date.slice(0, 4)})</span> */}
+                      </h1>
+                      <p className="movie-score">
+                        User Score: <span>{data.vote_average}</span>
+                      </p>
+                      <h2 className="movie-subtitle">Overview</h2>
+                      <p className="movie-text">{data.overview}</p>
+                      <h2 className="movie-subtitle">Genres</h2>
+                      <p className="movie-text">
+                        {data.genres.map(({ name, id }) => {
+                          return <span key={id}>{name}</span>;
+                        })}
+                      </p>
+                    </div>
                   </div>
                 </>
               ))}
           </div>
-          <ul>
-            Additional informarion
-            <li>
-              <Link to="cast">Cast</Link>
+          <ul className="movie-more-info-items">
+            <h3>Additional informarion</h3>
+            <li className="movie-more-info-item">
+              <Link to="cast" className="movie-more-info-link">
+                Cast
+              </Link>
             </li>
-            <li>
-              <Link to="reviews">Reviews</Link>
+            <li className="movie-more-info-item">
+              <Link to="reviews" className="movie-more-info-link">
+                Reviews
+              </Link>
             </li>
           </ul>
-          <Outlet />
+          <Suspense fallback={<Loader />}>
+            <Outlet />
+          </Suspense>
         </>
       )}
     </>

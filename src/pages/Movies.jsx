@@ -1,8 +1,10 @@
 import { fetchByName } from 'api';
+import Loader from 'components/Loader';
 import { useEffect, useState } from 'react';
-import { Link, Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { TextField, Button } from '@mui/material';
 
-export const Movies = () => {
+const Movies = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState();
   const [status, setStatus] = useState('idle');
@@ -29,7 +31,13 @@ export const Movies = () => {
   };
 
   useEffect(() => {
+    setName(movieName);
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
     async function fetchData() {
+      setStatus('pending');
       const optionsForName = {
         method: 'GET',
         url: 'https://api.themoviedb.org/3/search/movie',
@@ -58,28 +66,33 @@ export const Movies = () => {
     if (name.length !== 0) {
       fetchData();
     }
+    // eslint-disable-next-line
   }, [name]);
 
   return (
     <>
       <form action="submit" onSubmit={updateName}>
-        <input
+        <TextField
+          id="outlined-basic"
+          variant="outlined"
           name="name"
           type="text"
           value={movieName}
           onChange={updateQueryString}
         />
-        <button type="submit">Search</button>
-        <button type="button" onClick={cleanInput}>
+        <Button type="submit" variant="contained">
+          Search
+        </Button>
+        <Button type="button" variant="contained" onClick={cleanInput}>
           Clean
-        </button>
+        </Button>
       </form>
 
       {status === 'idle' ? null : (
         <>
-          <ul className="items">
-            {status === 'pending' && <div>LOAD</div>}
-            {status === 'rejected' && <div>Error! Reload page</div>}
+          {status === 'pending' && <Loader />}
+          {status === 'rejected' && <div>Error! Reload page</div>}
+          <ul className="movies-items">
             {status === 'resolved' &&
               (data.length === 0 ? (
                 <div>There are no movies!</div>
@@ -87,8 +100,12 @@ export const Movies = () => {
                 <>
                   {data.map(({ title, id, original_title }) => {
                     return (
-                      <li key={id}>
-                        <Link to={`/movies/${id}`} state={{ from: location }}>
+                      <li key={id} className="movies-item">
+                        <Link
+                          className="movies-link"
+                          to={`/movies/${id}`}
+                          state={{ from: location }}
+                        >
                           {title ? title : original_title}
                         </Link>
                       </li>
