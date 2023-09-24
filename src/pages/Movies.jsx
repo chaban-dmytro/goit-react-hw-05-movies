@@ -55,7 +55,6 @@ const Movies = () => {
       };
       try {
         const movieByName = await fetchByName(optionsForName);
-        console.log(movieByName);
         setData(movieByName.data.results);
         setStatus('resolved');
       } catch (error) {

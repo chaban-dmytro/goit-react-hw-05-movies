@@ -44,12 +44,12 @@ const Reviews = () => {
                 <div>We don`t have any reviews for this movie</div>
               ) : (
                 <>
-                  <ul>
+                  <ul className="reviews-items">
                     {data.map(({ author, content }) => {
                       return (
-                        <li key={author}>
-                          <p>{author}</p>
-                          <p>{content}</p>
+                        <li className="reviews-item" key={author}>
+                          <p className="reviews-author">{author}</p>
+                          <p className="reviews-text">{content}</p>
                         </li>
                       );
                     })}

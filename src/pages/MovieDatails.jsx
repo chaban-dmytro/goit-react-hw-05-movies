@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import Loader from 'components/Loader';
 import noImg from '../no_img.jpg';
+import { AiOutlineArrowLeft } from 'react-icons/ai';
 
 const MovieDatails = () => {
   const [data, setData] = useState();
@@ -52,7 +53,8 @@ const MovieDatails = () => {
               ) : (
                 <>
                   <Link to={backLinkLocationRef.current} className="go-back">
-                    Go back
+                    <AiOutlineArrowLeft />
+                    <span>Go back</span>
                   </Link>
                   <div className="movie-wrapper">
                     <img
@@ -70,7 +72,6 @@ const MovieDatails = () => {
                         <span>
                           ({data.release_date?.slice(0, 4) ?? '0000'})
                         </span>
-                        {/* <span>({data.release_date.slice(0, 4)})</span> */}
                       </h1>
                       <p className="movie-score">
                         User Score: <span>{data.vote_average}</span>
@@ -89,7 +90,7 @@ const MovieDatails = () => {
               ))}
           </div>
           <ul className="movie-more-info-items">
-            <h3>Additional informarion</h3>
+            <h3 className="movie-more-info-title">Additional informarion</h3>
             <li className="movie-more-info-item">
               <Link to="cast" className="movie-more-info-link">
                 Cast
